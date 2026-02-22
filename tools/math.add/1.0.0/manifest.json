@@ -1,0 +1,33 @@
+{
+  "id": "tool:math.add",
+  "name": "math.add",
+  "version": "1.0.0",
+  "summary": "Add two numbers",
+  "description": "Add two numbers and return the result.",
+  "tags": ["math", "utility"],
+  "provider": "jumith",
+  "entry": {
+    "runtime": "node",
+    "main": "dist/index.js",
+    "export": "tool"
+  },
+  "schema": {
+    "input": {
+      "type": "object",
+      "properties": {
+        "a": { "type": "number" },
+        "b": { "type": "number" }
+      },
+      "required": ["a", "b"]
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "result": { "type": "number" }
+      },
+      "required": ["result"]
+    }
+  },
+  "requiresApproval": false,
+  "requiredSecrets": []
+}

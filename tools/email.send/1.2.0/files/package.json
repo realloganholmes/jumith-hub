@@ -1,0 +1,6 @@
+{
+  "name": "email.send",
+  "version": "1.2.0",
+  "type": "module",
+  "main": "dist/index.js"
+}

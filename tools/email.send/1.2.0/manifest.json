@@ -1,0 +1,33 @@
+{
+  "id": "tool:email.send",
+  "name": "email.send",
+  "version": "1.2.0",
+  "summary": "Send transactional email",
+  "description": "Send transactional email via SMTP.",
+  "tags": ["email", "smtp"],
+  "provider": "acme",
+  "entry": {
+    "runtime": "node",
+    "main": "dist/index.js",
+    "export": "tool"
+  },
+  "schema": {
+    "input": {
+      "type": "object",
+      "properties": {
+        "to": { "type": "string" },
+        "subject": { "type": "string" },
+        "body": { "type": "string" }
+      },
+      "required": ["to", "subject", "body"]
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "messageId": { "type": "string" }
+      }
+    }
+  },
+  "requiresApproval": true,
+  "requiredSecrets": ["smtp_user", "smtp_pass"]
+}
