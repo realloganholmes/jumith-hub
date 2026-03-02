@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tool details</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div>
+          <h1 id="toolName">Tool</h1>
+          <p id="toolSummary">Loading tool details...</p>
+        </div>
+        <div class="actions">
+          <a class="button" href="/">All tools</a>
+          <a class="button primary" href="/upload">Upload tool</a>
+        </div>
+      </header>
+
+      <section class="card">
+        <h2 class="section-title">Overview</h2>
+        <div class="meta" id="toolMeta"></div>
+
+        <h2 class="section-title">Description</h2>
+        <p id="toolDescription" class="helper-text"></p>
+
+        <h2 class="section-title">Required secrets</h2>
+        <div id="toolSecrets" class="chip-row"></div>
+
+        <h2 class="section-title">Tool code</h2>
+        <div id="toolFiles"></div>
+      </section>
+    </main>
+
+    <script src="/js/tool.js"></script>
+  </body>
+</html>

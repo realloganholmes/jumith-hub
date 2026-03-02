@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Upload tool</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div>
+          <h1>Upload a tool</h1>
+          <p>Share your MCP tool with the Jumith Hub.</p>
+        </div>
+        <div class="actions">
+          <a class="button" href="/">All tools</a>
+        </div>
+      </header>
+
+      <section class="card">
+        <form id="uploadForm" class="form">
+          <div>
+            <label for="name">Tool name</label>
+            <input id="name" name="name" type="text" required />
+          </div>
+          <div>
+            <label for="description">Description</label>
+            <textarea id="description" name="description" required></textarea>
+          </div>
+          <div>
+            <label for="file">Python file</label>
+            <input id="file" name="file" type="file" accept=".py" required />
+          </div>
+          <div class="toggle-row">
+            <label class="toggle">
+              <input id="usesPayment" name="uses_payment" type="checkbox" />
+              Uses payment
+            </label>
+            <label class="toggle">
+              <input id="requiresApproval" name="requires_approval" type="checkbox" />
+              Requires approval
+            </label>
+          </div>
+          <div>
+            <label for="requiredSecrets">Required secret env vars</label>
+            <textarea
+              id="requiredSecrets"
+              name="required_secrets"
+              placeholder="ONE_SECRET_PER_LINE"
+            ></textarea>
+            <div class="helper-text">Add one secret key per line.</div>
+          </div>
+          <div class="actions">
+            <button class="button primary" type="submit">Upload tool</button>
+          </div>
+        </form>
+        <div id="uploadStatus" class="status" style="display: none;"></div>
+      </section>
+    </main>
+
+    <script src="/js/upload.js"></script>
+  </body>
+</html>

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jumith Hub</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div>
+          <h1>Jumith Hub</h1>
+          <p>Discover, preview, and share tools in one clean registry.</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="/upload">Upload tool</a>
+        </div>
+      </header>
+
+      <section class="card">
+        <div class="search-bar">
+          <input
+            id="searchInput"
+            type="text"
+            placeholder="Search tools by name or description..."
+          />
+          <span class="helper-text" id="resultsCount"></span>
+        </div>
+        <div id="toolGrid" class="grid"></div>
+        <div id="emptyState" class="status" style="display: none;">
+          No tools match this search yet.
+        </div>
+      </section>
+    </main>
+
+    <script src="/js/list.js"></script>
+  </body>
+</html>

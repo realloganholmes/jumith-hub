@@ -73,6 +73,7 @@ function loadTools() {
         description: manifest.description,
         entry: manifest.entry,
         schema: manifest.schema,
+        usesPayment: Boolean(manifest.usesPayment),
         requiresApproval: Boolean(manifest.requiresApproval),
         requiredSecrets: Array.isArray(manifest.requiredSecrets)
           ? manifest.requiredSecrets
