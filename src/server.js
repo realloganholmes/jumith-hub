@@ -89,6 +89,35 @@ function nextVersion(versions) {
   return `${major}.${minor}.${patch + 1}`;
 }
 
+function parseJsonSchema(value, fieldName) {
+  if (typeof value !== "string" || !value.trim()) {
+    return { error: `Missing required field: ${fieldName}` };
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return { error: `${fieldName} must be a JSON object` };
+    }
+    if (parsed.type !== "object") {
+      return { error: `${fieldName} must have type: "object"` };
+    }
+    return { value: parsed };
+  } catch (error) {
+    return { error: `${fieldName} must be valid JSON` };
+  }
+}
+
+function extractToolMetadata(buffer) {
+  const source = buffer.toString("utf8");
+  const nameMatch = source.match(/name\s*:\s*["'`]([^"'`]+)["'`]/);
+  const descriptionMatch = source.match(/description\s*:\s*["'`]([^"'`]+)["'`]/);
+  return {
+    name: nameMatch ? nameMatch[1] : "",
+    description: descriptionMatch ? descriptionMatch[1] : ""
+  };
+}
+
 function loadToolsSafe(res) {
   try {
     return loadTools();
@@ -157,7 +186,7 @@ app.get("/v1/tools/:id", (req, res) => {
   if (!tools) {
     return;
   }
-  const tool = tools.find((item) => item.id === req.params.id);
+  const tool = tools.find((item) => item.name === req.params.id || item.id === req.params.id);
   if (!tool) {
     return res
       .status(404)
@@ -176,10 +205,10 @@ app.get("/v1/tools", (req, res) => {
   const q = normalizeQueryValue(req.query.q);
   const filtered = q
     ? tools.filter((tool) => {
-        const latest = tool.versions[0];
-        const searchTarget = `${tool.name} ${latest.summary} ${latest.description}`.toLowerCase();
-        return searchTarget.includes(q.toLowerCase());
-      })
+      const latest = tool.versions[0];
+      const searchTarget = `${tool.name} ${latest.summary} ${latest.description}`.toLowerCase();
+      return searchTarget.includes(q.toLowerCase());
+    })
     : tools;
 
   const results = filtered.map((tool) => {
@@ -202,17 +231,44 @@ app.get("/v1/tools", (req, res) => {
 });
 
 app.post("/v1/tools/upload", upload.single("file"), (req, res) => {
-  const name = normalizeQueryValue(req.body.name);
-  const description = normalizeQueryValue(req.body.description);
   const usesPayment = Boolean(req.body.uses_payment);
   const requiresApproval = Boolean(req.body.requires_approval);
   const requiredSecrets = parseSecrets(req.body.required_secrets);
+  const inputSchemaField = parseJsonSchema(req.body.input_schema, "input_schema");
+  const outputSchemaField = parseJsonSchema(req.body.output_schema, "output_schema");
   const file = req.file;
 
-  if (!name || !description || !file) {
+  if (!file) {
     return res.status(400).json(
-      makeError("INVALID_REQUEST", "Missing required fields: name, description, file", {
-        fields: ["name", "description", "file"]
+      makeError("INVALID_REQUEST", "Missing required field: file", {
+        fields: ["file"]
+      })
+    );
+  }
+
+  if (inputSchemaField.error || outputSchemaField.error) {
+    return res.status(400).json(
+      makeError(
+        "INVALID_REQUEST",
+        inputSchemaField.error || outputSchemaField.error,
+        {
+          fields: [
+            inputSchemaField.error ? "input_schema" : null,
+            outputSchemaField.error ? "output_schema" : null
+          ].filter(Boolean)
+        }
+      )
+    );
+  }
+
+  const metadata = extractToolMetadata(file.buffer);
+  const name = normalizeQueryValue(metadata.name);
+  const description = normalizeQueryValue(metadata.description);
+
+  if (!name || !description) {
+    return res.status(400).json(
+      makeError("INVALID_REQUEST", "index.js must export tool.name and tool.description", {
+        fields: ["tool.name", "tool.description"]
       })
     );
   }
@@ -266,8 +322,8 @@ app.post("/v1/tools/upload", upload.single("file"), (req, res) => {
             export: "tool"
           },
           schema: {
-            input: { type: "object", properties: {} },
-            output: { type: "object", properties: {} }
+            input: inputSchemaField.value,
+            output: outputSchemaField.value
           },
           usesPayment,
           requiresApproval,
@@ -308,7 +364,7 @@ app.get("/v1/tools/:id/versions/:version/bundle", (req, res) => {
   if (!tools) {
     return;
   }
-  const tool = tools.find((item) => item.id === req.params.id);
+  const tool = tools.find((item) => item.name === req.params.id || item.id === req.params.id);
   if (!tool) {
     return res
       .status(404)

@@ -21,16 +21,28 @@
       <section class="card">
         <form id="uploadForm" class="form">
           <div>
-            <label for="name">Tool name</label>
-            <input id="name" name="name" type="text" required />
-          </div>
-          <div>
-            <label for="description">Description</label>
-            <textarea id="description" name="description" required></textarea>
-          </div>
-          <div>
             <label for="file">index.js file</label>
             <input id="file" name="file" type="file" accept=".js" required />
+          </div>
+          <div>
+            <label for="inputSchema">Input schema (JSON)</label>
+            <textarea
+              id="inputSchema"
+              name="input_schema"
+              placeholder='{"type":"object","properties":{"a":{"type":"number"},"b":{"type":"number"}},"required":["a","b"]}'
+              required
+            ></textarea>
+            <div class="helper-text">Must be a JSON Schema object.</div>
+          </div>
+          <div>
+            <label for="outputSchema">Output schema (JSON)</label>
+            <textarea
+              id="outputSchema"
+              name="output_schema"
+              placeholder='{"type":"object","properties":{"sum":{"type":"number"}},"required":["sum"]}'
+              required
+            ></textarea>
+            <div class="helper-text">Must be a JSON Schema object.</div>
           </div>
           <div class="toggle-row">
             <label class="toggle">
