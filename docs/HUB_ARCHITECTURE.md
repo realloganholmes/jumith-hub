@@ -67,33 +67,6 @@ Rejects:
 
 ---
 
-### 3. MCP Manifest Schema
-
-Each tool must include a manifest:
-
-```json
-{
-  "id": "pizza-order",
-  "name": "Pizza Order Tool",
-  "description": "Order pizza from Vendor X",
-  "runtime": "python",
-  "entrypoint": "server.py",
-  "required_secrets": [
-    { "key": "USERNAME", "required": true },
-    { "key": "PASSWORD", "required": true }
-  ],
-  "permissions": {
-    "network": ["https://api.vendor.com"],
-    "filesystem": false,
-    "execution": false
-  },
-  "input_schema": {},
-  "output_schema": {}
-}
-```
-
----
-
 ### 4. Artifact Store
 
 Stores:

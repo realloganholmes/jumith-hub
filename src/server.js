@@ -224,11 +224,12 @@ app.post("/v1/tools/upload", upload.single("file"), (req, res) => {
       .json(makeError("INVALID_REQUEST", "Tool name produced an invalid id"));
   }
 
-  const extension = path.extname(file.originalname || "").toLowerCase();
-  if (extension !== ".py") {
-    return res
-      .status(400)
-      .json(makeError("INVALID_REQUEST", "Tool file must be a .py file"));
+  const originalName = path.basename(file.originalname || "");
+  const extension = path.extname(originalName).toLowerCase();
+  if (extension !== ".js" || originalName !== "index.js") {
+    return res.status(400).json(
+      makeError("INVALID_REQUEST", "Tool file must be named index.js")
+    );
   }
 
   const tools = loadToolsSafe(res);
@@ -241,12 +242,12 @@ app.post("/v1/tools/upload", upload.single("file"), (req, res) => {
   const version = nextVersion(existing ? existing.versions : []);
   const versionDir = path.join(toolsDir, toolSlug, version);
   const filesDir = path.join(versionDir, "files");
-  const entryFileName = file.originalname || `${toolSlug}.py`;
-  const entryPath = path.join(filesDir, entryFileName);
+  const entryFileName = "index.js";
+  const entryPath = path.join(filesDir, "dist", entryFileName);
   const manifestPath = path.join(versionDir, "manifest.json");
 
   try {
-    fs.mkdirSync(filesDir, { recursive: true });
+    fs.mkdirSync(path.join(filesDir, "dist"), { recursive: true });
     fs.writeFileSync(entryPath, file.buffer);
     fs.writeFileSync(
       manifestPath,
@@ -260,8 +261,9 @@ app.post("/v1/tools/upload", upload.single("file"), (req, res) => {
           tags: [],
           provider: "community",
           entry: {
-            runtime: "python",
-            main: `files/${entryFileName}`
+            runtime: "node",
+            main: "dist/index.js",
+            export: "tool"
           },
           schema: {
             input: { type: "object", properties: {} },
